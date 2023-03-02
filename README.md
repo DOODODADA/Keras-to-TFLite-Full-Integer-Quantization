@@ -8,7 +8,7 @@ pip install -r requirements.txt
 ```
 ## Usage
 To convert a Keras model to a fully integer quantized TensorFlow Lite model, follow these steps:
-1. Open the `full_integer.py` file.
+1. Open the `keras2tflite.py` file.
 2. Modify the following variables to suit your needs:
 * `DATASET`: The dataset used for training and testing.
 * `IMAGE_SIZE`: The size of the input images for the model.
@@ -16,11 +16,11 @@ To convert a Keras model to a fully integer quantized TensorFlow Lite model, fol
 * `KERAS_MODEL`: The Keras model to be converted.
 * `MODEL_DIR`: The directory to save the TFLite model.
 * `MODEL_NAME`: The name of the TFLite model.
-3. Save the `full_integer.py` file.
+3. Save the `keras2tflite.py` file.
 4. Run the following command:
 
 ```bash
-python full_integer.py
+python keras2tflite.py
 ```
 
 The converted TFLite model will be saved in the specified `MODEL_DIR` directory with the specified `MODEL_NAME`.

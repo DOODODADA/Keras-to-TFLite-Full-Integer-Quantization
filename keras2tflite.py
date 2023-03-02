@@ -1,13 +1,13 @@
 import tensorflow as tf
 import numpy as np
-from keras_cv.models import ResNet18
+from keras.applications.resnet import ResNet50
 import pathlib
 
 DATASET = tf.keras.datasets.cifar10  # The dataset used for training and testing
 IMAGE_SIZE = [224, 224]
 CALIBRATION_NUM = 200  # Number of images used for calibration
 
-KERAS_MODEL = ResNet18(include_rescaling=False, include_top=False)
+KERAS_MODEL = ResNet50(weights='imagenet')
 
 MODEL_DIR = "./tflite_model_2"  # Directory to save the TFLite model
 MODEL_NAME = "resnet18"
