@@ -2,6 +2,7 @@ import tensorflow as tf
 import numpy as np
 import pathlib
 import argparse
+import utils
 
 from keras.applications.resnet import ResNet50
 
@@ -52,6 +53,27 @@ def save_model(model, model_dir, model_name):
     tflite_model_quant_file = tflite_models_dir/f"{model_name}.tflite"
     tflite_model_quant_file.write_bytes(model)
 
+def evaluate_model(tflite_file, model_type):
+    (train_images, train_labels), (test_images, test_labels) = DATASET.load_data()
+
+    predictions = []
+    batch_size = 256
+    test_image_indices = range(test_images.shape[0])
+    batch_num = (len(test_image_indices) + batch_size - 1)//batch_size
+    test_image_indices_batches = [[]]
+
+    for batch in range(batch_num):
+        test_image_indices_batches.append(test_image_indices[batch*batch_size:(batch+1)*batch_size])
+
+    for test_image_indices in test_image_indices_batches:
+        prediction = utils.run_tflite_model(tflite_file, test_image_indices, test_images)
+        predictions = np.concatenate((predictions, prediction), axis=0).astype(int)
+
+    accuracy = (np.sum(test_labels.flatten() == predictions) * 100) / test_images.shape[0]
+
+    print('%s model accuracy is %.4f%% (Number of test samples=%d)' % (
+        model_type, accuracy, test_images.shape[0]))
+
 def get_argprase():
     parser = argparse.ArgumentParser()
     parser.add_argument('--model', type=str, default=None,
@@ -89,3 +111,5 @@ if __name__ == "__main__":
     quant_model = convert_to_tflite(model)
     # Save the TFLite model to disk
     save_model(quant_model, model_directory, model_name)
+
+    evaluate_model(f"{model_directory}/{model_name}.tflite", model_type="Quantized")
