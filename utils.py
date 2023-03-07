@@ -11,6 +11,8 @@ def run_tflite_model(tflite_file, test_image_indices, test_images):
     input_details = interpreter.get_input_details()[0]
     output_details = interpreter.get_output_details()[0]
 
+    input_shape = input_details["shape"]
+
     predictions = np.zeros((len(test_image_indices),), dtype=int)
     for i, test_image_index in enumerate(test_image_indices):
         test_image = test_images[test_image_index]
@@ -20,7 +22,7 @@ def run_tflite_model(tflite_file, test_image_indices, test_images):
             input_scale, input_zero_point = input_details["quantization"]
             test_image = test_image / input_scale + input_zero_point
 
-        test_image = tf.image.resize(test_image, (224,224))
+        test_image = tf.image.resize(test_image, (input_shape[1],input_shape[2]))
         test_image = np.expand_dims(test_image, axis=0).astype(input_details["dtype"])
         
         interpreter.set_tensor(input_details["index"], test_image)
